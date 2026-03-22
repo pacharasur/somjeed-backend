@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: somjeed-chatbot
+  datasource:
+    url: jdbc:postgresql://db:5432/chatbot
+    username: user
+    password: password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    com.pachara.somjeed.somjeed_chatbot: DEBUG
