@@ -14,6 +14,7 @@ public class DuplicateTransactionRule implements PredictionRule {
 
     private static final long WINDOW_MINUTES = 10;
 
+
     @Override
     public boolean matches(UserContext context) {
         List<Transaction> transactions = context.getRecentTransactions();
@@ -26,15 +27,22 @@ public class DuplicateTransactionRule implements PredictionRule {
                 .toList();
 
         for (int i = 0; i < sorted.size() - 1; i++) {
-            Transaction current = sorted.get(i);
-            Transaction next = sorted.get(i + 1);
-            boolean sameAmount = current.getAmount().compareTo(next.getAmount()) == 0;
-            long minutes = Math.abs(Duration.between(current.getTimestamp(), next.getTimestamp()).toMinutes());
-            if (sameAmount && minutes <= WINDOW_MINUTES) {
+            if (isDuplicate(sorted.get(i), sorted.get(i + 1))) {
                 return true;
             }
         }
+
         return false;
+    }
+
+    private boolean isDuplicate(Transaction current, Transaction next) {
+        boolean sameAmount = current.getAmount().compareTo(next.getAmount()) == 0;
+
+        long minutes = Math.abs(
+                Duration.between(current.getTimestamp(), next.getTimestamp()).toMinutes()
+        );
+
+        return sameAmount && minutes <= WINDOW_MINUTES;
     }
 
     @Override

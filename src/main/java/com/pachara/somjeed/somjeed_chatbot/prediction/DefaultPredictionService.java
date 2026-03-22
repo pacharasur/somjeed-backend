@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 public class DefaultPredictionService implements PredictionService {
 
     private final Clock clock;
-    private final java.util.List<PredictionRule> rules;
+    private final List<PredictionRule> rules;
 
     @Override
     public Optional<PredictionResult> predict(UserContext context) {

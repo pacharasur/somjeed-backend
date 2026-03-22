@@ -14,3 +14,8 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    com.pachara.somjeed.somjeed_chatbot: DEBUG
