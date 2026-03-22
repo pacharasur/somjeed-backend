@@ -23,4 +23,5 @@ public class ChatContext {
     private List<Transaction> transactions;
     private PredictionType lastPredictionType;
     private boolean awaitingConfirmation;
+    private boolean awaitingCancellation;
 }

@@ -43,6 +43,7 @@ public class MockPaymentService implements PaymentService {
                     null,
                     Collections.emptyList(),
                     null,
+                    false,
                     false
             );
         }
@@ -56,6 +57,7 @@ public class MockPaymentService implements PaymentService {
                     today,
                     Collections.emptyList(),
                     null,
+                    false,
                     false
             );
         }
@@ -68,6 +70,7 @@ public class MockPaymentService implements PaymentService {
                 null,
                 duplicateTransactions(today),
                 null,
+                false,
                 false
         );
     }
