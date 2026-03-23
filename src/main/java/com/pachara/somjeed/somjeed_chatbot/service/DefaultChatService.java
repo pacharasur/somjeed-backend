@@ -1,28 +1,27 @@
 package com.pachara.somjeed.somjeed_chatbot.service;
 
 import com.pachara.somjeed.somjeed_chatbot.enums.ConfirmationTypeEnum;
+import com.pachara.somjeed.somjeed_chatbot.enums.IntentTypeEnum;
+import com.pachara.somjeed.somjeed_chatbot.enums.PredictionTypeEnum;
 import com.pachara.somjeed.somjeed_chatbot.intent.IntentHandler;
 import com.pachara.somjeed.somjeed_chatbot.intent.IntentService;
-import com.pachara.somjeed.somjeed_chatbot.enums.IntentTypeEnum;
 import com.pachara.somjeed.somjeed_chatbot.model.domain.ChatContext;
 import com.pachara.somjeed.somjeed_chatbot.model.domain.UserContext;
 import com.pachara.somjeed.somjeed_chatbot.model.request.ChatRequest;
 import com.pachara.somjeed.somjeed_chatbot.model.response.ChatResponse;
 import com.pachara.somjeed.somjeed_chatbot.prediction.PredictionService;
-import com.pachara.somjeed.somjeed_chatbot.enums.PredictionTypeEnum;
-
-import java.util.Collections;
-import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.text.NumberFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.text.NumberFormat;
-import java.time.format.DateTimeFormatter;
 
 import static com.pachara.somjeed.somjeed_chatbot.util.TextUtils.normalize;
 

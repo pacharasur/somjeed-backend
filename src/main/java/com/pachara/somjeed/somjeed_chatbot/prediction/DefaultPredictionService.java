@@ -1,21 +1,16 @@
 package com.pachara.somjeed.somjeed_chatbot.prediction;
 
 import com.pachara.somjeed.somjeed_chatbot.enums.PredictionTypeEnum;
-import com.pachara.somjeed.somjeed_chatbot.model.domain.Transaction;
 import com.pachara.somjeed.somjeed_chatbot.model.domain.UserContext;
 import com.pachara.somjeed.somjeed_chatbot.prediction.rule.PredictionRule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

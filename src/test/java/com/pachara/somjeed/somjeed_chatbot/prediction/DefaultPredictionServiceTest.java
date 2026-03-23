@@ -38,7 +38,6 @@ class DefaultPredictionServiceTest {
     @Test
     void predict_shouldReturnEmpty_whenNoRuleMatches() {
         DefaultPredictionService service = new DefaultPredictionService(
-                fixedClock,
                 List.of(new OverdueRule(fixedClock), new PaymentTodayRule(), new DuplicateTransactionRule())
         );
         UserContext context = userContext("u1", LocalDate.of(2026, 3, 25), false, List.of());
@@ -51,7 +50,6 @@ class DefaultPredictionServiceTest {
     @Test
     void predict_shouldSelectHighestScore_whenMultipleRulesMatch() {
         DefaultPredictionService service = new DefaultPredictionService(
-                fixedClock,
                 List.of(new PaymentTodayRule(), new DuplicateTransactionRule(), new OverdueRule(fixedClock))
         );
         LocalDateTime t1 = LocalDateTime.of(2026, 3, 22, 10, 0);
@@ -71,7 +69,6 @@ class DefaultPredictionServiceTest {
     @Test
     void predict_shouldReturnPaymentConfirmed_whenPaymentTodayMatches() {
         DefaultPredictionService service = new DefaultPredictionService(
-                fixedClock,
                 List.of(new PaymentTodayRule())
         );
         UserContext context = userContext("u2", LocalDate.of(2026, 3, 25), true, List.of());
@@ -88,7 +85,6 @@ class DefaultPredictionServiceTest {
     @Test
     void predict_shouldReturnDuplicateReasonWithAmount_whenDuplicateMatches() {
         DefaultPredictionService service = new DefaultPredictionService(
-                fixedClock,
                 List.of(new DuplicateTransactionRule())
         );
         LocalDateTime t1 = LocalDateTime.of(2026, 3, 23, 10, 0);
@@ -108,7 +104,7 @@ class DefaultPredictionServiceTest {
 
     @Test
     void predict_shouldThrowNpe_whenMatchedRuleTypeIsNull() {
-        DefaultPredictionService service = new DefaultPredictionService(fixedClock, List.of(mockRule));
+        DefaultPredictionService service = new DefaultPredictionService(List.of(mockRule));
         UserContext context = userContext("u5", LocalDate.of(2026, 3, 30), false, List.of());
 
         when(mockRule.matches(context)).thenReturn(true);
@@ -119,7 +115,7 @@ class DefaultPredictionServiceTest {
 
     @Test
     void predict_shouldReturnEmpty_whenRulesListIsEmpty() {
-        DefaultPredictionService service = new DefaultPredictionService(fixedClock, List.of());
+        DefaultPredictionService service = new DefaultPredictionService(List.of());
         UserContext context = userContext("u6", LocalDate.of(2026, 3, 1), true, List.of());
 
         Optional<PredictionResult> result = service.predict(context);
