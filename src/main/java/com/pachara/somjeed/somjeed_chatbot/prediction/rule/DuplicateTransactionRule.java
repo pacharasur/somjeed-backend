@@ -2,7 +2,7 @@ package com.pachara.somjeed.somjeed_chatbot.prediction.rule;
 
 import com.pachara.somjeed.somjeed_chatbot.model.domain.Transaction;
 import com.pachara.somjeed.somjeed_chatbot.model.domain.UserContext;
-import com.pachara.somjeed.somjeed_chatbot.prediction.PredictionType;
+import com.pachara.somjeed.somjeed_chatbot.enums.PredictionTypeEnum;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -51,7 +51,7 @@ public class DuplicateTransactionRule implements PredictionRule {
     }
 
     @Override
-    public PredictionType type() {
-        return PredictionType.DUPLICATE_TRANSACTION;
+    public PredictionTypeEnum type() {
+        return PredictionTypeEnum.DUPLICATE_TRANSACTION;
     }
 }

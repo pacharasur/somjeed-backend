@@ -1,5 +1,6 @@
 package com.pachara.somjeed.somjeed_chatbot.prediction;
 
+import com.pachara.somjeed.somjeed_chatbot.enums.PredictionTypeEnum;
 import com.pachara.somjeed.somjeed_chatbot.model.domain.Transaction;
 import com.pachara.somjeed.somjeed_chatbot.model.domain.UserContext;
 import com.pachara.somjeed.somjeed_chatbot.prediction.rule.DuplicateTransactionRule;
@@ -64,7 +65,7 @@ class DefaultPredictionServiceTest {
 
         PredictionResult result = service.predict(context).orElseThrow();
 
-        assertEquals(PredictionType.OVERDUE, result.predictionType());
+        assertEquals(PredictionTypeEnum.OVERDUE, result.predictionType());
         assertEquals("User due date is 3 days in the past", result.reason());
         assertEquals(0.95, result.confidence());
     }
@@ -79,7 +80,7 @@ class DefaultPredictionServiceTest {
 
         PredictionResult result = service.predict(context).orElseThrow();
 
-        assertEquals(PredictionType.PAYMENT_CONFIRMED, result.predictionType());
+        assertEquals(PredictionTypeEnum.PAYMENT_CONFIRMED, result.predictionType());
         assertEquals(
                 "Your payment was received today. Would you like to check your updated available credit?",
                 result.message()
@@ -105,7 +106,7 @@ class DefaultPredictionServiceTest {
 
         PredictionResult result = service.predict(context).orElseThrow();
 
-        assertEquals(PredictionType.DUPLICATE_TRANSACTION, result.predictionType());
+        assertEquals(PredictionTypeEnum.DUPLICATE_TRANSACTION, result.predictionType());
         assertEquals("We detected similar transactions. Would you like to review them now?", result.message());
         assertEquals("Detected 2 similar transactions for amount 999", result.reason());
         assertEquals(0.75, result.confidence());
@@ -117,7 +118,7 @@ class DefaultPredictionServiceTest {
         UserContext context = userContext("u4", LocalDate.of(2026, 3, 30), false, List.of());
 
         when(mockRule.matches(context)).thenReturn(true);
-        when(mockRule.type()).thenReturn(PredictionType.DUPLICATE_TRANSACTION);
+        when(mockRule.type()).thenReturn(PredictionTypeEnum.DUPLICATE_TRANSACTION);
 
         PredictionResult result = service.predict(context).orElseThrow();
 

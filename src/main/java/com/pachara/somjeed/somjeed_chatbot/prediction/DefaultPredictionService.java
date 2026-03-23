@@ -1,5 +1,6 @@
 package com.pachara.somjeed.somjeed_chatbot.prediction;
 
+import com.pachara.somjeed.somjeed_chatbot.enums.PredictionTypeEnum;
 import com.pachara.somjeed.somjeed_chatbot.model.domain.Transaction;
 import com.pachara.somjeed.somjeed_chatbot.model.domain.UserContext;
 import com.pachara.somjeed.somjeed_chatbot.prediction.rule.PredictionRule;
@@ -31,23 +32,23 @@ public class DefaultPredictionService implements PredictionService {
                 .map(rule -> toPredictionResult(rule.type(), context));
     }
 
-    private PredictionResult toPredictionResult(PredictionType type, UserContext context) {
+    private PredictionResult toPredictionResult(PredictionTypeEnum type, UserContext context) {
         return Optional.ofNullable(handlers.get(type))
                 .orElseThrow(() -> new IllegalArgumentException("Unsupported prediction type: " + type))
                 .apply(context);
     }
 
-    private final Map<PredictionType, Function<UserContext, PredictionResult>> handlers = Map.of(
-            PredictionType.OVERDUE, this::buildOverdue,
-            PredictionType.PAYMENT_CONFIRMED, this::buildPaymentConfirmed,
-            PredictionType.DUPLICATE_TRANSACTION, this::buildDuplicate
+    private final Map<PredictionTypeEnum, Function<UserContext, PredictionResult>> handlers = Map.of(
+            PredictionTypeEnum.OVERDUE, this::buildOverdue,
+            PredictionTypeEnum.PAYMENT_CONFIRMED, this::buildPaymentConfirmed,
+            PredictionTypeEnum.DUPLICATE_TRANSACTION, this::buildDuplicate
     );
 
     private PredictionResult buildOverdue(UserContext context) {
         long overdueDays = ChronoUnit.DAYS.between(context.getDueDate(), LocalDate.now(clock));
 
         return new PredictionResult(
-                PredictionType.OVERDUE,
+                PredictionTypeEnum.OVERDUE,
                 "Looks like your payment is overdue. Would you like to check your outstanding balance?",
                 "User due date is " + overdueDays + " days in the past",
                 0.95
@@ -56,7 +57,7 @@ public class DefaultPredictionService implements PredictionService {
 
     private PredictionResult buildPaymentConfirmed(UserContext context) {
         return new PredictionResult(
-                PredictionType.PAYMENT_CONFIRMED,
+                PredictionTypeEnum.PAYMENT_CONFIRMED,
                 "Your payment was received today. Would you like to check your updated available credit?",
                 "User has a payment recorded today",
                 0.85
@@ -67,7 +68,7 @@ public class DefaultPredictionService implements PredictionService {
         String reason = buildDuplicateReason(context);
 
         return new PredictionResult(
-                PredictionType.DUPLICATE_TRANSACTION,
+                PredictionTypeEnum.DUPLICATE_TRANSACTION,
                 "We detected similar transactions. Would you like to review them now?",
                 reason,
                 0.75

@@ -9,7 +9,7 @@ import com.pachara.somjeed.somjeed_chatbot.model.domain.UserContext;
 import com.pachara.somjeed.somjeed_chatbot.model.request.ChatRequest;
 import com.pachara.somjeed.somjeed_chatbot.model.response.ChatResponse;
 import com.pachara.somjeed.somjeed_chatbot.prediction.PredictionService;
-import com.pachara.somjeed.somjeed_chatbot.prediction.PredictionType;
+import com.pachara.somjeed.somjeed_chatbot.enums.PredictionTypeEnum;
 
 import java.util.Collections;
 import java.util.Locale;
@@ -113,7 +113,7 @@ public class DefaultChatService implements ChatService {
                 });
     }
 
-    private void setPredictionContext(ChatContext context, PredictionType type) {
+    private void setPredictionContext(ChatContext context, PredictionTypeEnum type) {
         context.setAwaitingConfirmation(true);
         context.setAwaitingCancellation(false);
         context.setLastPredictionType(type);
@@ -135,9 +135,9 @@ public class DefaultChatService implements ChatService {
     }
 
     private ChatResponse handlePredictionFollowUp(ChatContext context, UserContext userContext) {
-        PredictionType type = context.getLastPredictionType();
+        PredictionTypeEnum type = context.getLastPredictionType();
 
-        if (PredictionType.DUPLICATE_TRANSACTION.equals(type)) {
+        if (PredictionTypeEnum.DUPLICATE_TRANSACTION.equals(type)) {
             return handleDuplicate(context);
         }
 

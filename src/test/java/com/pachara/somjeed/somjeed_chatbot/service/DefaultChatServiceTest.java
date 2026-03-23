@@ -10,7 +10,7 @@ import com.pachara.somjeed.somjeed_chatbot.model.request.ChatRequest;
 import com.pachara.somjeed.somjeed_chatbot.model.response.ChatResponse;
 import com.pachara.somjeed.somjeed_chatbot.prediction.PredictionResult;
 import com.pachara.somjeed.somjeed_chatbot.prediction.PredictionService;
-import com.pachara.somjeed.somjeed_chatbot.prediction.PredictionType;
+import com.pachara.somjeed.somjeed_chatbot.enums.PredictionTypeEnum;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -66,7 +66,7 @@ class DefaultChatServiceTest {
         when(userContextService.getUserContext("user_001")).thenReturn(userContext, userContext);
         when(greetingService.generateGreeting()).thenReturn("Good morning, on a sunshine day!");
         when(predictionService.predict(userContext)).thenReturn(Optional.of(
-                new PredictionResult(PredictionType.OVERDUE, "Prediction question", "reason", 0.95)
+                new PredictionResult(PredictionTypeEnum.OVERDUE, "Prediction question", "reason", 0.95)
         ));
 
         ChatResponse initResponse = chatService.handle(request("user_001", " INIT "));
@@ -107,7 +107,7 @@ class DefaultChatServiceTest {
         UserContext userContext = userContext("user_002", LocalDate.now().plusDays(4), new BigDecimal("8000"), false, List.of());
         when(userContextService.getUserContext("user_002")).thenReturn(userContext);
         when(predictionService.predict(userContext)).thenReturn(Optional.of(
-                new PredictionResult(PredictionType.PAYMENT_CONFIRMED, "Prediction from greeting", "reason", 0.8)
+                new PredictionResult(PredictionTypeEnum.PAYMENT_CONFIRMED, "Prediction from greeting", "reason", 0.8)
         ));
 
         ChatResponse response = chatService.handle(request("user_002", "Hello"));
@@ -136,7 +136,7 @@ class DefaultChatServiceTest {
         UserContext userContext = userContext("user_004", LocalDate.now().minusDays(1), new BigDecimal("120000"), false, List.of());
         when(userContextService.getUserContext("user_004")).thenReturn(userContext, userContext);
         when(predictionService.predict(userContext)).thenReturn(Optional.of(
-                new PredictionResult(PredictionType.OVERDUE, "Overdue question", "reason", 0.95)
+                new PredictionResult(PredictionTypeEnum.OVERDUE, "Overdue question", "reason", 0.95)
         ));
         when(intentService.detectIntent(eq("maybe"), any(ChatContext.class))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
         when(intentHandler.handle(eq(IntentTypeEnum.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(List.of("Fallback from intent"));
@@ -154,7 +154,7 @@ class DefaultChatServiceTest {
         UserContext userContext = userContext("user_005", LocalDate.now().plusDays(3), new BigDecimal("10000"), true, List.of());
         when(userContextService.getUserContext("user_005")).thenReturn(userContext, userContext, userContext);
         when(predictionService.predict(userContext)).thenReturn(Optional.of(
-                new PredictionResult(PredictionType.PAYMENT_CONFIRMED, "Payment confirmed question", "reason", 0.85)
+                new PredictionResult(PredictionTypeEnum.PAYMENT_CONFIRMED, "Payment confirmed question", "reason", 0.85)
         ));
         when(intentService.detectIntent(eq("yes"), any(ChatContext.class))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
         when(intentHandler.handle(eq(IntentTypeEnum.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(List.of("Intent fallback"));
@@ -173,7 +173,7 @@ class DefaultChatServiceTest {
         UserContext userContext = userContext("user_006", LocalDate.now().plusDays(5), new BigDecimal("3000"), false, List.of());
         when(userContextService.getUserContext("user_006")).thenReturn(userContext, userContext, userContext);
         when(predictionService.predict(userContext)).thenReturn(Optional.of(
-                new PredictionResult(PredictionType.DUPLICATE_TRANSACTION, "Detected duplicates question", "reason", 0.7)
+                new PredictionResult(PredictionTypeEnum.DUPLICATE_TRANSACTION, "Detected duplicates question", "reason", 0.7)
         ));
 
         chatService.handle(request("user_006", "hi"));
@@ -189,7 +189,7 @@ class DefaultChatServiceTest {
         UserContext userContext = userContext("user_007", LocalDate.now().plusDays(5), new BigDecimal("3000"), false, List.of());
         when(userContextService.getUserContext("user_007")).thenReturn(userContext, userContext, userContext, userContext);
         when(predictionService.predict(userContext)).thenReturn(Optional.of(
-                new PredictionResult(PredictionType.DUPLICATE_TRANSACTION, "Detected duplicates question", "reason", 0.7)
+                new PredictionResult(PredictionTypeEnum.DUPLICATE_TRANSACTION, "Detected duplicates question", "reason", 0.7)
         ));
         when(intentService.detectIntent(eq("no"), any(ChatContext.class))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
         when(intentHandler.handle(eq(IntentTypeEnum.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(List.of("Intent fallback after reset"));

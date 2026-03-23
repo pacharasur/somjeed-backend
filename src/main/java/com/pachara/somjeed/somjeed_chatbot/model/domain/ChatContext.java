@@ -1,6 +1,6 @@
 package com.pachara.somjeed.somjeed_chatbot.model.domain;
 
-import com.pachara.somjeed.somjeed_chatbot.prediction.PredictionType;
+import com.pachara.somjeed.somjeed_chatbot.enums.PredictionTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +21,7 @@ public class ChatContext {
     private Integer rewardPoints;
     private LocalDate lastPaymentDate;
     private List<Transaction> transactions;
-    private PredictionType lastPredictionType;
+    private PredictionTypeEnum lastPredictionType;
     private boolean awaitingConfirmation;
     private boolean awaitingCancellation;
 }

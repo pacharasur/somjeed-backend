@@ -1,7 +1,7 @@
 package com.pachara.somjeed.somjeed_chatbot.prediction.rule;
 
 import com.pachara.somjeed.somjeed_chatbot.model.domain.UserContext;
-import com.pachara.somjeed.somjeed_chatbot.prediction.PredictionType;
+import com.pachara.somjeed.somjeed_chatbot.enums.PredictionTypeEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +25,7 @@ public class OverdueRule implements PredictionRule {
     }
 
     @Override
-    public PredictionType type() {
-        return PredictionType.OVERDUE;
+    public PredictionTypeEnum type() {
+        return PredictionTypeEnum.OVERDUE;
     }
 }
