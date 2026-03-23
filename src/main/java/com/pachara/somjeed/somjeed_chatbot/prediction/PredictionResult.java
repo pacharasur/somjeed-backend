@@ -4,7 +4,6 @@ import com.pachara.somjeed.somjeed_chatbot.enums.PredictionTypeEnum;
 
 public record PredictionResult(
         PredictionTypeEnum predictionType,
-        String message,
-        double confidence
+        String message
 ) {
 }

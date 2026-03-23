@@ -45,20 +45,17 @@ public class DefaultPredictionService implements PredictionService {
     );
 
     private PredictionResult buildOverdue(UserContext context) {
-        long overdueDays = ChronoUnit.DAYS.between(context.getDueDate(), LocalDate.now(clock));
 
         return new PredictionResult(
                 PredictionTypeEnum.OVERDUE,
-                "Looks like your payment is overdue. Would you like to check your outstanding balance?",
-                0.95
+                "Looks like your payment is overdue. Would you like to check your outstanding balance?"
         );
     }
 
     private PredictionResult buildPaymentConfirmed(UserContext context) {
         return new PredictionResult(
                 PredictionTypeEnum.PAYMENT_CONFIRMED,
-                "Your payment was received today. Would you like to check your updated available credit?",
-                0.85
+                "Your payment was received today. Would you like to check your updated available credit?"
         );
     }
 
@@ -66,8 +63,7 @@ public class DefaultPredictionService implements PredictionService {
 
         return new PredictionResult(
                 PredictionTypeEnum.DUPLICATE_TRANSACTION,
-                "We detected similar transactions. Would you like to review them now?",
-                0.75
+                "We detected similar transactions. Would you like to review them now?"
         );
     }
 }

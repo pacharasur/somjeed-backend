@@ -66,7 +66,6 @@ class DefaultPredictionServiceTest {
         PredictionResult result = service.predict(context).orElseThrow();
 
         assertEquals(PredictionTypeEnum.OVERDUE, result.predictionType());
-        assertEquals(0.95, result.confidence());
     }
 
     @Test
@@ -84,7 +83,6 @@ class DefaultPredictionServiceTest {
                 "Your payment was received today. Would you like to check your updated available credit?",
                 result.message()
         );
-        assertEquals(0.85, result.confidence());
     }
 
     @Test
@@ -106,7 +104,6 @@ class DefaultPredictionServiceTest {
 
         assertEquals(PredictionTypeEnum.DUPLICATE_TRANSACTION, result.predictionType());
         assertEquals("We detected similar transactions. Would you like to review them now?", result.message());
-        assertEquals(0.75, result.confidence());
     }
 
     @Test
