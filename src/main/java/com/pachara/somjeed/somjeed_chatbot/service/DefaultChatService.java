@@ -3,7 +3,7 @@ package com.pachara.somjeed.somjeed_chatbot.service;
 import com.pachara.somjeed.somjeed_chatbot.enums.ConfirmationTypeEnum;
 import com.pachara.somjeed.somjeed_chatbot.intent.IntentHandler;
 import com.pachara.somjeed.somjeed_chatbot.intent.IntentService;
-import com.pachara.somjeed.somjeed_chatbot.intent.IntentType;
+import com.pachara.somjeed.somjeed_chatbot.enums.IntentTypeEnum;
 import com.pachara.somjeed.somjeed_chatbot.model.domain.ChatContext;
 import com.pachara.somjeed.somjeed_chatbot.model.domain.UserContext;
 import com.pachara.somjeed.somjeed_chatbot.model.request.ChatRequest;
@@ -126,7 +126,7 @@ public class DefaultChatService implements ChatService {
     }
 
     private ChatResponse handleIntentFallback(String message, ChatContext context) {
-        IntentType intent = intentService.detectIntent(message, context);
+        IntentTypeEnum intent = intentService.detectIntent(message, context);
 
         List<String> messages = Optional.ofNullable(intentHandler.handle(intent, context))
                 .orElseGet(Collections::emptyList);

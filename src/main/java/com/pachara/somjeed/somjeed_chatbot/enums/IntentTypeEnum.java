@@ -1,6 +1,6 @@
-package com.pachara.somjeed.somjeed_chatbot.intent;
+package com.pachara.somjeed.somjeed_chatbot.enums;
 
-public enum IntentType {
+public enum IntentTypeEnum {
     CHECK_BALANCE,
     PAYMENT_DUE,
     REPORT_LOST_CARD,

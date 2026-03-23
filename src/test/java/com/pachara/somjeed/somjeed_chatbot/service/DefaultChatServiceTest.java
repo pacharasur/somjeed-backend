@@ -2,7 +2,7 @@ package com.pachara.somjeed.somjeed_chatbot.service;
 
 import com.pachara.somjeed.somjeed_chatbot.intent.IntentHandler;
 import com.pachara.somjeed.somjeed_chatbot.intent.IntentService;
-import com.pachara.somjeed.somjeed_chatbot.intent.IntentType;
+import com.pachara.somjeed.somjeed_chatbot.enums.IntentTypeEnum;
 import com.pachara.somjeed.somjeed_chatbot.model.domain.ChatContext;
 import com.pachara.somjeed.somjeed_chatbot.model.domain.Transaction;
 import com.pachara.somjeed.somjeed_chatbot.model.domain.UserContext;
@@ -90,8 +90,8 @@ class DefaultChatServiceTest {
         when(userContextService.getUserContext("user_001")).thenReturn(userContext, userContext);
         when(greetingService.generateGreeting()).thenReturn("Good evening, stay dry out there!");
         when(predictionService.predict(userContext)).thenReturn(Optional.empty());
-        when(intentService.detectIntent(eq("yes"), any(ChatContext.class))).thenReturn(IntentType.GENERAL_INQUIRY);
-        when(intentHandler.handle(eq(IntentType.GENERAL_INQUIRY), any(ChatContext.class)))
+        when(intentService.detectIntent(eq("yes"), any(ChatContext.class))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
+        when(intentHandler.handle(eq(IntentTypeEnum.GENERAL_INQUIRY), any(ChatContext.class)))
                 .thenReturn(List.of("How can I assist you further?"));
 
         ChatResponse initResponse = chatService.handle(request("user_001", "init"));
@@ -122,8 +122,8 @@ class DefaultChatServiceTest {
         UserContext userContext = userContext("user_003", LocalDate.now().plusDays(2), new BigDecimal("500"), false, List.of());
         when(userContextService.getUserContext("user_003")).thenReturn(userContext);
         when(predictionService.predict(userContext)).thenReturn(Optional.empty());
-        when(intentService.detectIntent(eq("hi"), any(ChatContext.class))).thenReturn(IntentType.GENERAL_INQUIRY);
-        when(intentHandler.handle(eq(IntentType.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(List.of("Fallback"));
+        when(intentService.detectIntent(eq("hi"), any(ChatContext.class))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
+        when(intentHandler.handle(eq(IntentTypeEnum.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(List.of("Fallback"));
 
         ChatResponse response = chatService.handle(request("user_003", "hi"));
 
@@ -138,8 +138,8 @@ class DefaultChatServiceTest {
         when(predictionService.predict(userContext)).thenReturn(Optional.of(
                 new PredictionResult(PredictionType.OVERDUE, "Overdue question", "reason", 0.95)
         ));
-        when(intentService.detectIntent(eq("maybe"), any(ChatContext.class))).thenReturn(IntentType.GENERAL_INQUIRY);
-        when(intentHandler.handle(eq(IntentType.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(List.of("Fallback from intent"));
+        when(intentService.detectIntent(eq("maybe"), any(ChatContext.class))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
+        when(intentHandler.handle(eq(IntentTypeEnum.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(List.of("Fallback from intent"));
 
         chatService.handle(request("user_004", "hello"));
         ChatResponse response = chatService.handle(request("user_004", "maybe"));
@@ -156,8 +156,8 @@ class DefaultChatServiceTest {
         when(predictionService.predict(userContext)).thenReturn(Optional.of(
                 new PredictionResult(PredictionType.PAYMENT_CONFIRMED, "Payment confirmed question", "reason", 0.85)
         ));
-        when(intentService.detectIntent(eq("yes"), any(ChatContext.class))).thenReturn(IntentType.GENERAL_INQUIRY);
-        when(intentHandler.handle(eq(IntentType.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(List.of("Intent fallback"));
+        when(intentService.detectIntent(eq("yes"), any(ChatContext.class))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
+        when(intentHandler.handle(eq(IntentTypeEnum.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(List.of("Intent fallback"));
 
         chatService.handle(request("user_005", "hey"));
         ChatResponse followUp = chatService.handle(request("user_005", "yes"));
@@ -191,8 +191,8 @@ class DefaultChatServiceTest {
         when(predictionService.predict(userContext)).thenReturn(Optional.of(
                 new PredictionResult(PredictionType.DUPLICATE_TRANSACTION, "Detected duplicates question", "reason", 0.7)
         ));
-        when(intentService.detectIntent(eq("no"), any(ChatContext.class))).thenReturn(IntentType.GENERAL_INQUIRY);
-        when(intentHandler.handle(eq(IntentType.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(List.of("Intent fallback after reset"));
+        when(intentService.detectIntent(eq("no"), any(ChatContext.class))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
+        when(intentHandler.handle(eq(IntentTypeEnum.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(List.of("Intent fallback after reset"));
 
         chatService.handle(request("user_007", "hi"));
         chatService.handle(request("user_007", "yes"));
@@ -207,8 +207,8 @@ class DefaultChatServiceTest {
     void handle_intentHandlerReturnsNull_shouldReturnEmptyList() {
         UserContext userContext = userContext("user_008", LocalDate.now().plusDays(1), new BigDecimal("1500"), false, List.of());
         when(userContextService.getUserContext("user_008")).thenReturn(userContext);
-        when(intentService.detectIntent(eq("anything"), any(ChatContext.class))).thenReturn(IntentType.GENERAL_INQUIRY);
-        when(intentHandler.handle(eq(IntentType.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(null);
+        when(intentService.detectIntent(eq("anything"), any(ChatContext.class))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
+        when(intentHandler.handle(eq(IntentTypeEnum.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(null);
 
         ChatResponse response = chatService.handle(request("user_008", "anything"));
 
@@ -232,8 +232,8 @@ class DefaultChatServiceTest {
                 List.of(new Transaction(new BigDecimal("200"), LocalDateTime.of(2026, 3, 22, 11, 30)))
         );
         when(userContextService.getUserContext("user_009")).thenReturn(firstContext, secondContext);
-        when(intentService.detectIntent(any(), any(ChatContext.class))).thenReturn(IntentType.GENERAL_INQUIRY);
-        when(intentHandler.handle(eq(IntentType.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(List.of("ok"));
+        when(intentService.detectIntent(any(), any(ChatContext.class))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
+        when(intentHandler.handle(eq(IntentTypeEnum.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(List.of("ok"));
 
         chatService.handle(request("user_009", "first"));
         chatService.handle(request("user_009", "second"));
@@ -251,8 +251,8 @@ class DefaultChatServiceTest {
     void handle_corruptedContextWithNullPredictionTypeAndYes_shouldThrowException() {
         UserContext userContext = userContext("user_010", LocalDate.now(), new BigDecimal("999"), false, List.of());
         when(userContextService.getUserContext("user_010")).thenReturn(userContext, userContext);
-        when(intentService.detectIntent(eq("hello"), any(ChatContext.class))).thenReturn(IntentType.GENERAL_INQUIRY);
-        when(intentHandler.handle(eq(IntentType.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(List.of("seed context"));
+        when(intentService.detectIntent(eq("hello"), any(ChatContext.class))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
+        when(intentHandler.handle(eq(IntentTypeEnum.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(List.of("seed context"));
 
         chatService.handle(request("user_010", "hello"));
 

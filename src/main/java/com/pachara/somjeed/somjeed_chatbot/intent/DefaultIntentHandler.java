@@ -1,5 +1,6 @@
 package com.pachara.somjeed.somjeed_chatbot.intent;
 
+import com.pachara.somjeed.somjeed_chatbot.enums.IntentTypeEnum;
 import com.pachara.somjeed.somjeed_chatbot.model.domain.ChatContext;
 import org.springframework.stereotype.Service;
 
@@ -15,21 +16,21 @@ import java.util.function.Function;
 public class DefaultIntentHandler implements IntentHandler {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("d MMMM uuuu", Locale.ENGLISH);
-    private final Map<IntentType, Function<ChatContext, List<String>>> handlers = buildHandlers();
+    private final Map<IntentTypeEnum, Function<ChatContext, List<String>>> handlers = buildHandlers();
 
     @Override
-    public List<String> handle(IntentType intent, ChatContext context) {
-        return handlers.getOrDefault(intent, handlers.get(IntentType.GENERAL_INQUIRY)).apply(context);
+    public List<String> handle(IntentTypeEnum intent, ChatContext context) {
+        return handlers.getOrDefault(intent, handlers.get(IntentTypeEnum.GENERAL_INQUIRY)).apply(context);
     }
 
-    private Map<IntentType, Function<ChatContext, List<String>>> buildHandlers() {
-        Map<IntentType, Function<ChatContext, List<String>>> mapping = new EnumMap<>(IntentType.class);
-        mapping.put(IntentType.CHECK_BALANCE, this::handleCheckBalance);
-        mapping.put(IntentType.PAYMENT_DUE, this::handlePaymentDue);
-        mapping.put(IntentType.REPORT_LOST_CARD, this::handleReportLostCard);
-        mapping.put(IntentType.REWARD_POINTS, this::handleRewardPoints);
-        mapping.put(IntentType.CLOSING, this::handleClosing);
-        mapping.put(IntentType.GENERAL_INQUIRY, this::handleGeneralInquiry);
+    private Map<IntentTypeEnum, Function<ChatContext, List<String>>> buildHandlers() {
+        Map<IntentTypeEnum, Function<ChatContext, List<String>>> mapping = new EnumMap<>(IntentTypeEnum.class);
+        mapping.put(IntentTypeEnum.CHECK_BALANCE, this::handleCheckBalance);
+        mapping.put(IntentTypeEnum.PAYMENT_DUE, this::handlePaymentDue);
+        mapping.put(IntentTypeEnum.REPORT_LOST_CARD, this::handleReportLostCard);
+        mapping.put(IntentTypeEnum.REWARD_POINTS, this::handleRewardPoints);
+        mapping.put(IntentTypeEnum.CLOSING, this::handleClosing);
+        mapping.put(IntentTypeEnum.GENERAL_INQUIRY, this::handleGeneralInquiry);
         return mapping;
     }
 
