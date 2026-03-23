@@ -110,17 +110,6 @@ class DefaultPredictionServiceTest {
     }
 
     @Test
-    void predict_shouldUseGenericDuplicateReason_whenRuleMatchesButNoGroupedDuplicate() {
-        DefaultPredictionService service = new DefaultPredictionService(fixedClock, List.of(mockRule));
-        UserContext context = userContext("u4", LocalDate.of(2026, 3, 30), false, List.of());
-
-        when(mockRule.matches(context)).thenReturn(true);
-        when(mockRule.type()).thenReturn(PredictionTypeEnum.DUPLICATE_TRANSACTION);
-
-        PredictionResult result = service.predict(context).orElseThrow();
-    }
-
-    @Test
     void predict_shouldThrowNpe_whenMatchedRuleTypeIsNull() {
         DefaultPredictionService service = new DefaultPredictionService(fixedClock, List.of(mockRule));
         UserContext context = userContext("u5", LocalDate.of(2026, 3, 30), false, List.of());

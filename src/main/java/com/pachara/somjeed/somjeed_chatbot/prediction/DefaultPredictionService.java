@@ -63,23 +63,11 @@ public class DefaultPredictionService implements PredictionService {
     }
 
     private PredictionResult buildDuplicate(UserContext context) {
-        String reason = buildDuplicateReason(context);
 
         return new PredictionResult(
                 PredictionTypeEnum.DUPLICATE_TRANSACTION,
                 "We detected similar transactions. Would you like to review them now?",
                 0.75
         );
-    }
-
-    private String buildDuplicateReason(UserContext context) {
-        return context.getRecentTransactions().stream()
-                .collect(Collectors.groupingBy(Transaction::getAmount, Collectors.counting()))
-                .entrySet()
-                .stream()
-                .filter(entry -> entry.getValue() >= 2)
-                .findFirst()
-                .map(entry -> "Detected " + entry.getValue() + " similar transactions for amount " + entry.getKey())
-                .orElse("Detected similar transactions within short time window");
     }
 }
