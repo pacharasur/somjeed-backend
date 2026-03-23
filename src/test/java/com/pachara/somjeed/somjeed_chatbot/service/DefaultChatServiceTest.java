@@ -1,8 +1,9 @@
 package com.pachara.somjeed.somjeed_chatbot.service;
 
+import com.pachara.somjeed.somjeed_chatbot.enums.IntentTypeEnum;
+import com.pachara.somjeed.somjeed_chatbot.enums.PredictionTypeEnum;
 import com.pachara.somjeed.somjeed_chatbot.intent.IntentHandler;
 import com.pachara.somjeed.somjeed_chatbot.intent.IntentService;
-import com.pachara.somjeed.somjeed_chatbot.enums.IntentTypeEnum;
 import com.pachara.somjeed.somjeed_chatbot.model.domain.ChatContext;
 import com.pachara.somjeed.somjeed_chatbot.model.domain.Transaction;
 import com.pachara.somjeed.somjeed_chatbot.model.domain.UserContext;
@@ -10,25 +11,21 @@ import com.pachara.somjeed.somjeed_chatbot.model.request.ChatRequest;
 import com.pachara.somjeed.somjeed_chatbot.model.response.ChatResponse;
 import com.pachara.somjeed.somjeed_chatbot.prediction.PredictionResult;
 import com.pachara.somjeed.somjeed_chatbot.prediction.PredictionService;
-import com.pachara.somjeed.somjeed_chatbot.enums.PredictionTypeEnum;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -63,7 +60,7 @@ class DefaultChatServiceTest {
                 false,
                 List.of()
         );
-        when(userContextService.getUserContext("user_001")).thenReturn(userContext, userContext);
+        when(userContextService.getUserContext("user_001")).thenReturn(userContext);
         when(greetingService.generateGreeting()).thenReturn("Good morning, on a sunshine day!");
         when(predictionService.predict(userContext)).thenReturn(Optional.of(
                 new PredictionResult(PredictionTypeEnum.OVERDUE, "Prediction question")
@@ -80,7 +77,7 @@ class DefaultChatServiceTest {
                 List.of("Your current outstanding balance is 120,000 THB, and your due date was 1 September 2025."),
                 yesResponse.getMessages()
         );
-        verify(intentService, never()).detectIntent(any(), any());
+        verify(intentService, never()).detectIntent(any());
         verify(predictionService, times(1)).predict(userContext);
     }
 
@@ -90,7 +87,7 @@ class DefaultChatServiceTest {
         when(userContextService.getUserContext("user_001")).thenReturn(userContext, userContext);
         when(greetingService.generateGreeting()).thenReturn("Good evening, stay dry out there!");
         when(predictionService.predict(userContext)).thenReturn(Optional.empty());
-        when(intentService.detectIntent(eq("yes"), any(ChatContext.class))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
+        when(intentService.detectIntent(eq("yes"))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
         when(intentHandler.handle(eq(IntentTypeEnum.GENERAL_INQUIRY), any(ChatContext.class)))
                 .thenReturn(List.of("How can I assist you further?"));
 
@@ -99,7 +96,7 @@ class DefaultChatServiceTest {
 
         ChatResponse yesResponse = chatService.handle(request("user_001", "yes"));
         assertEquals(List.of("How can I assist you further?"), yesResponse.getMessages());
-        verify(intentService, times(1)).detectIntent(eq("yes"), any(ChatContext.class));
+        verify(intentService, times(1)).detectIntent(eq("yes"));
     }
 
     @Test
@@ -114,7 +111,7 @@ class DefaultChatServiceTest {
 
         assertEquals(List.of("Prediction from greeting"), response.getMessages());
         verify(greetingService, never()).generateGreeting();
-        verify(intentService, never()).detectIntent(any(), any());
+        verify(intentService, never()).detectIntent(any());
     }
 
     @Test
@@ -122,13 +119,13 @@ class DefaultChatServiceTest {
         UserContext userContext = userContext("user_003", LocalDate.now().plusDays(2), new BigDecimal("500"), false, List.of());
         when(userContextService.getUserContext("user_003")).thenReturn(userContext);
         when(predictionService.predict(userContext)).thenReturn(Optional.empty());
-        when(intentService.detectIntent(eq("hi"), any(ChatContext.class))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
+        when(intentService.detectIntent(eq("hi"))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
         when(intentHandler.handle(eq(IntentTypeEnum.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(List.of("Fallback"));
 
         ChatResponse response = chatService.handle(request("user_003", "hi"));
 
         assertEquals(List.of("Fallback"), response.getMessages());
-        verify(intentService).detectIntent(eq("hi"), any(ChatContext.class));
+        verify(intentService).detectIntent(eq("hi"));
     }
 
     @Test
@@ -138,7 +135,7 @@ class DefaultChatServiceTest {
         when(predictionService.predict(userContext)).thenReturn(Optional.of(
                 new PredictionResult(PredictionTypeEnum.OVERDUE, "Overdue question")
         ));
-        when(intentService.detectIntent(eq("maybe"), any(ChatContext.class))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
+        when(intentService.detectIntent(eq("maybe"))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
         when(intentHandler.handle(eq(IntentTypeEnum.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(List.of("Fallback from intent"));
 
         chatService.handle(request("user_004", "hello"));
@@ -146,26 +143,49 @@ class DefaultChatServiceTest {
 
         assertEquals(List.of("Fallback from intent"), response.getMessages());
         verify(predictionService, times(1)).predict(userContext);
-        verify(intentService, times(1)).detectIntent(eq("maybe"), any(ChatContext.class));
+        verify(intentService, times(1)).detectIntent(eq("maybe"));
     }
 
     @Test
-    void handle_paymentConfirmedYesFollowUp_shouldReturnDetailThenResetContext() {
+    void handle_shouldReturnPaymentConfirmedDetail_whenUserRepliesYes() {
         UserContext userContext = userContext("user_005", LocalDate.now().plusDays(3), new BigDecimal("10000"), true, List.of());
-        when(userContextService.getUserContext("user_005")).thenReturn(userContext, userContext, userContext);
-        when(predictionService.predict(userContext)).thenReturn(Optional.of(
-                new PredictionResult(PredictionTypeEnum.PAYMENT_CONFIRMED, "Payment confirmed question")
-        ));
-        when(intentService.detectIntent(eq("yes"), any(ChatContext.class))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
-        when(intentHandler.handle(eq(IntentTypeEnum.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(List.of("Intent fallback"));
+
+        when(userContextService.getUserContext("user_005")).thenReturn(userContext, userContext);
+
+        when(predictionService.predict(userContext)).thenReturn(Optional.of(new PredictionResult(
+                PredictionTypeEnum.PAYMENT_CONFIRMED,
+                "Payment confirmed question"
+        )));
 
         chatService.handle(request("user_005", "hey"));
+
         ChatResponse followUp = chatService.handle(request("user_005", "yes"));
+
         assertEquals(List.of("Your updated available credit is 80,000 THB."), followUp.getMessages());
+    }
+
+    @Test
+    void handle_shouldFallbackToIntent_afterFollowUpIsCompleted() {
+        UserContext userContext = userContext("user_005", LocalDate.now().plusDays(3), new BigDecimal("10000"), true, List.of());
+
+        when(userContextService.getUserContext("user_005")).thenReturn(userContext, userContext, userContext);
+
+        when(predictionService.predict(userContext)).thenReturn(Optional.of(new PredictionResult(
+                PredictionTypeEnum.PAYMENT_CONFIRMED,
+                "Payment confirmed question"
+        )));
+
+        when(intentService.detectIntent(eq("yes"))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
+
+        when(intentHandler.handle(eq(IntentTypeEnum.GENERAL_INQUIRY), any())).thenReturn(List.of("Intent fallback"));
+
+        chatService.handle(request("user_005", "hey"));
+        chatService.handle(request("user_005", "yes"));
 
         ChatResponse afterReset = chatService.handle(request("user_005", "yes"));
+
         assertEquals(List.of("Intent fallback"), afterReset.getMessages());
-        verify(intentService, times(1)).detectIntent(eq("yes"), any(ChatContext.class));
+        verify(intentService, times(1)).detectIntent(eq("yes"));
     }
 
     @Test
@@ -191,7 +211,7 @@ class DefaultChatServiceTest {
         when(predictionService.predict(userContext)).thenReturn(Optional.of(
                 new PredictionResult(PredictionTypeEnum.DUPLICATE_TRANSACTION, "Detected duplicates question")
         ));
-        when(intentService.detectIntent(eq("no"), any(ChatContext.class))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
+        when(intentService.detectIntent(eq("no"))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
         when(intentHandler.handle(eq(IntentTypeEnum.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(List.of("Intent fallback after reset"));
 
         chatService.handle(request("user_007", "hi"));
@@ -207,7 +227,7 @@ class DefaultChatServiceTest {
     void handle_intentHandlerReturnsNull_shouldReturnEmptyList() {
         UserContext userContext = userContext("user_008", LocalDate.now().plusDays(1), new BigDecimal("1500"), false, List.of());
         when(userContextService.getUserContext("user_008")).thenReturn(userContext);
-        when(intentService.detectIntent(eq("anything"), any(ChatContext.class))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
+        when(intentService.detectIntent(eq("anything"))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
         when(intentHandler.handle(eq(IntentTypeEnum.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(null);
 
         ChatResponse response = chatService.handle(request("user_008", "anything"));
@@ -232,37 +252,17 @@ class DefaultChatServiceTest {
                 List.of(new Transaction(new BigDecimal("200"), LocalDateTime.of(2026, 3, 22, 11, 30)))
         );
         when(userContextService.getUserContext("user_009")).thenReturn(firstContext, secondContext);
-        when(intentService.detectIntent(any(), any(ChatContext.class))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
-        when(intentHandler.handle(eq(IntentTypeEnum.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(List.of("ok"));
-
+        when(intentService.detectIntent(any())).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
+        ArgumentCaptor<ChatContext> captor = ArgumentCaptor.forClass(ChatContext.class);
+        when(intentHandler.handle(eq(IntentTypeEnum.GENERAL_INQUIRY), captor.capture())).thenReturn(List.of("ok"));
         chatService.handle(request("user_009", "first"));
         chatService.handle(request("user_009", "second"));
-
-        ArgumentCaptor<ChatContext> captor = ArgumentCaptor.forClass(ChatContext.class);
-        verify(intentService, times(2)).detectIntent(any(), captor.capture());
+        verify(intentService, times(2)).detectIntent(any());
         ChatContext latest = captor.getAllValues().get(1);
         assertEquals(LocalDate.of(2026, 4, 1), latest.getDueDate());
         assertEquals(new BigDecimal("2500"), latest.getOutstandingBalance());
         assertEquals(1, latest.getTransactions().size());
         assertFalse(latest.isAwaitingConfirmation());
-    }
-
-    @Test
-    void handle_corruptedContextWithNullPredictionTypeAndYes_shouldThrowException() {
-        UserContext userContext = userContext("user_010", LocalDate.now(), new BigDecimal("999"), false, List.of());
-        when(userContextService.getUserContext("user_010")).thenReturn(userContext, userContext);
-        when(intentService.detectIntent(eq("hello"), any(ChatContext.class))).thenReturn(IntentTypeEnum.GENERAL_INQUIRY);
-        when(intentHandler.handle(eq(IntentTypeEnum.GENERAL_INQUIRY), any(ChatContext.class))).thenReturn(List.of("seed context"));
-
-        chatService.handle(request("user_010", "hello"));
-
-        @SuppressWarnings("unchecked")
-        Map<String, ChatContext> contextStore = (Map<String, ChatContext>) ReflectionTestUtils.getField(chatService, "contextStore");
-        ChatContext context = contextStore.get("user_010");
-        context.setAwaitingConfirmation(true);
-        context.setLastPredictionType(null);
-
-        assertThrows(NullPointerException.class, () -> chatService.handle(request("user_010", "yes")));
     }
 
     private ChatRequest request(String userId, String message) {

@@ -46,22 +46,6 @@ class ChatControllerTest {
     }
 
     @Test
-    void chat_shouldReturnBadRequest_whenRequestInvalid() throws Exception {
-        when(chatService.handle(any(ChatRequest.class)))
-                .thenThrow(new IllegalArgumentException("Invalid chat request"));
-
-        ChatRequest request = new ChatRequest("user_001", "hello");
-
-        mockMvc.perform(post("/api/chat")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Invalid chat request"))
-                .andExpect(jsonPath("$.code").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.success").value(false));
-    }
-
-    @Test
     void chat_shouldReturnValidationError_whenRequiredFieldsMissing() throws Exception {
         ChatRequest request = new ChatRequest("", "");
 

@@ -125,7 +125,7 @@ public class DefaultChatService implements ChatService {
     }
 
     private ChatResponse handleIntentFallback(String message, ChatContext context) {
-        IntentTypeEnum intent = intentService.detectIntent(message, context);
+        IntentTypeEnum intent = intentService.detectIntent(message);
 
         List<String> messages = Optional.ofNullable(intentHandler.handle(intent, context))
                 .orElseGet(Collections::emptyList);

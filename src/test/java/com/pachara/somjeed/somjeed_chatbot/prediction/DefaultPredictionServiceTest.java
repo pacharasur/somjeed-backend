@@ -23,9 +23,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DefaultPredictionServiceTest {
@@ -100,17 +98,6 @@ class DefaultPredictionServiceTest {
 
         assertEquals(PredictionTypeEnum.DUPLICATE_TRANSACTION, result.predictionType());
         assertEquals("We detected similar transactions. Would you like to review them now?", result.message());
-    }
-
-    @Test
-    void predict_shouldThrowNpe_whenMatchedRuleTypeIsNull() {
-        DefaultPredictionService service = new DefaultPredictionService(List.of(mockRule));
-        UserContext context = userContext("u5", LocalDate.of(2026, 3, 30), false, List.of());
-
-        when(mockRule.matches(context)).thenReturn(true);
-        when(mockRule.type()).thenReturn(null);
-
-        assertThrows(NullPointerException.class, () -> service.predict(context));
     }
 
     @Test

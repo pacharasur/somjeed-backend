@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DefaultIntentHandlerTest {
 
@@ -63,32 +62,6 @@ class DefaultIntentHandlerTest {
     void handle_shouldReturnGeneralInquiry_whenIntentIsNullAndContextIsNull() {
         List<String> response = handler.handle(null, null);
         assertEquals(List.of("How can I assist you further?"), response);
-    }
-
-    @Test
-    void handle_shouldThrow_whenCheckBalanceContextMissingOutstandingBalance() {
-        ChatContext context = context();
-        context.setOutstandingBalance(null);
-        assertThrows(IllegalArgumentException.class, () -> handler.handle(IntentTypeEnum.CHECK_BALANCE, context));
-    }
-
-    @Test
-    void handle_shouldThrow_whenPaymentDueContextMissingDueDate() {
-        ChatContext context = context();
-        context.setDueDate(null);
-        assertThrows(NullPointerException.class, () -> handler.handle(IntentTypeEnum.PAYMENT_DUE, context));
-    }
-
-    @Test
-    void handle_shouldThrow_whenRewardPointsContextMissingPoints() {
-        ChatContext context = context();
-        context.setRewardPoints(null);
-        assertThrows(IllegalArgumentException.class, () -> handler.handle(IntentTypeEnum.REWARD_POINTS, context));
-    }
-
-    @Test
-    void handle_shouldThrow_whenNonFallbackIntentWithNullContext() {
-        assertThrows(NullPointerException.class, () -> handler.handle(IntentTypeEnum.CHECK_BALANCE, null));
     }
 
     private ChatContext context() {

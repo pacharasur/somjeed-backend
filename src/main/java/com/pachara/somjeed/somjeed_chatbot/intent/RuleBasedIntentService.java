@@ -1,12 +1,10 @@
 package com.pachara.somjeed.somjeed_chatbot.intent;
 
 import com.pachara.somjeed.somjeed_chatbot.enums.IntentTypeEnum;
-import com.pachara.somjeed.somjeed_chatbot.model.domain.ChatContext;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.stereotype.Service;
 
 import static com.pachara.somjeed.somjeed_chatbot.util.TextUtils.normalize;
 
@@ -22,7 +20,7 @@ public class RuleBasedIntentService implements IntentService {
     );
 
     @Override
-    public IntentTypeEnum detectIntent(String message, ChatContext context) {
+    public IntentTypeEnum detectIntent(String message) {
         String normalized = normalize(message);
 
         return INTENT_KEYWORDS.entrySet().stream()

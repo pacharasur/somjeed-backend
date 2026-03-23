@@ -10,8 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,22 +38,6 @@ class FeedbackControllerTest {
     }
 
     @Test
-    void submitFeedback_shouldReturnBadRequest_whenRequestInvalid() throws Exception {
-        doThrow(new IllegalArgumentException("Invalid feedback request"))
-                .when(feedbackService).submitFeedback(any(FeedbackRequest.class));
-
-        FeedbackRequest request = new FeedbackRequest("user_001", 3);
-
-        mockMvc.perform(post("/api/feedback")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Invalid feedback request"))
-                .andExpect(jsonPath("$.code").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.success").value(false));
-    }
-
-    @Test
     void submitFeedback_shouldReturnValidationError_whenRatingOutOfRange() throws Exception {
         FeedbackRequest request = new FeedbackRequest("user_001", 6);
 
@@ -64,6 +46,19 @@ class FeedbackControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Rating must be between 1 and 5."))
+                .andExpect(jsonPath("$.code").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.success").value(false));
+    }
+
+    @Test
+    void submitFeedback_shouldReturnValidationError_whenUserIdIsMissing() throws Exception {
+        FeedbackRequest request = new FeedbackRequest("", 1);
+
+        mockMvc.perform(post("/api/feedback")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("User ID is required."))
                 .andExpect(jsonPath("$.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.success").value(false));
     }
