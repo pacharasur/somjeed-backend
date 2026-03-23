@@ -167,7 +167,7 @@ public class DefaultChatService implements ChatService {
             context.setAwaitingCancellation(true);
             return new ChatResponse(List.of("Would you like me to cancel these duplicate transactions?"));
         }
-
+        resetContext(context);
         return new ChatResponse(List.of("Duplicate transactions have been cancelled successfully."));
     }
 
