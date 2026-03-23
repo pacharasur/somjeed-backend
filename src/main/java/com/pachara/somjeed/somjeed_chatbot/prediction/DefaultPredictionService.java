@@ -50,7 +50,6 @@ public class DefaultPredictionService implements PredictionService {
         return new PredictionResult(
                 PredictionTypeEnum.OVERDUE,
                 "Looks like your payment is overdue. Would you like to check your outstanding balance?",
-                "User due date is " + overdueDays + " days in the past",
                 0.95
         );
     }
@@ -59,7 +58,6 @@ public class DefaultPredictionService implements PredictionService {
         return new PredictionResult(
                 PredictionTypeEnum.PAYMENT_CONFIRMED,
                 "Your payment was received today. Would you like to check your updated available credit?",
-                "User has a payment recorded today",
                 0.85
         );
     }
@@ -70,7 +68,6 @@ public class DefaultPredictionService implements PredictionService {
         return new PredictionResult(
                 PredictionTypeEnum.DUPLICATE_TRANSACTION,
                 "We detected similar transactions. Would you like to review them now?",
-                reason,
                 0.75
         );
     }

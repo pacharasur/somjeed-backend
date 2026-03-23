@@ -66,7 +66,6 @@ class DefaultPredictionServiceTest {
         PredictionResult result = service.predict(context).orElseThrow();
 
         assertEquals(PredictionTypeEnum.OVERDUE, result.predictionType());
-        assertEquals("User due date is 3 days in the past", result.reason());
         assertEquals(0.95, result.confidence());
     }
 
@@ -85,7 +84,6 @@ class DefaultPredictionServiceTest {
                 "Your payment was received today. Would you like to check your updated available credit?",
                 result.message()
         );
-        assertEquals("User has a payment recorded today", result.reason());
         assertEquals(0.85, result.confidence());
     }
 
@@ -108,7 +106,6 @@ class DefaultPredictionServiceTest {
 
         assertEquals(PredictionTypeEnum.DUPLICATE_TRANSACTION, result.predictionType());
         assertEquals("We detected similar transactions. Would you like to review them now?", result.message());
-        assertEquals("Detected 2 similar transactions for amount 999", result.reason());
         assertEquals(0.75, result.confidence());
     }
 
@@ -121,8 +118,6 @@ class DefaultPredictionServiceTest {
         when(mockRule.type()).thenReturn(PredictionTypeEnum.DUPLICATE_TRANSACTION);
 
         PredictionResult result = service.predict(context).orElseThrow();
-
-        assertEquals("Detected similar transactions within short time window", result.reason());
     }
 
     @Test
