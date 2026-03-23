@@ -47,6 +47,18 @@ class DefaultIntentHandlerTest {
     }
 
     @Test
+    void handle_shouldMapAccountStatement() {
+        List<String> response = handler.handle(IntentTypeEnum.ACCOUNT_STATEMENT, context());
+
+        assertEquals(List.of(
+                        "Your latest account statement has been sent to your registered email address.",
+                        "Please check your inbox shortly."
+                ),
+                response
+        );
+    }
+
+    @Test
     void handle_shouldMapGeneralInquiry() {
         List<String> response = handler.handle(IntentTypeEnum.GENERAL_INQUIRY, context());
         assertEquals(List.of("How can I assist you further?"), response);

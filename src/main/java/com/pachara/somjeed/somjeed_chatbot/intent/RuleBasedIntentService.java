@@ -16,6 +16,7 @@ public class RuleBasedIntentService implements IntentService {
             IntentTypeEnum.CHECK_BALANCE, List.of("balance", "outstanding"),
             IntentTypeEnum.PAYMENT_DUE, List.of("due", "payment", "overdue"),
             IntentTypeEnum.REPORT_LOST_CARD, List.of("lost", "stolen"),
+            IntentTypeEnum.ACCOUNT_STATEMENT, List.of("statement", "transaction", "activity", "history"),
             IntentTypeEnum.REWARD_POINTS, List.of("point", "reward")
     );
 

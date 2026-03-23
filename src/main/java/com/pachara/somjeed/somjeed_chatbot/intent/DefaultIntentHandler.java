@@ -29,6 +29,7 @@ public class DefaultIntentHandler implements IntentHandler {
         mapping.put(IntentTypeEnum.PAYMENT_DUE, this::handlePaymentDue);
         mapping.put(IntentTypeEnum.REPORT_LOST_CARD, this::handleReportLostCard);
         mapping.put(IntentTypeEnum.REWARD_POINTS, this::handleRewardPoints);
+        mapping.put(IntentTypeEnum.ACCOUNT_STATEMENT, this::handleAccountStatement);
         mapping.put(IntentTypeEnum.CLOSING, this::handleClosing);
         mapping.put(IntentTypeEnum.GENERAL_INQUIRY, this::handleGeneralInquiry);
         return mapping;
@@ -52,6 +53,13 @@ public class DefaultIntentHandler implements IntentHandler {
 
     private List<String> handleClosing(ChatContext context) {
         return List.of("You're welcome. Glad I could help. Have a great day.");
+    }
+
+    private List<String> handleAccountStatement(ChatContext context) {
+        return List.of(
+                "Your latest account statement has been sent to your registered email address.",
+                "Please check your inbox shortly."
+        );
     }
 
     private List<String> handleGeneralInquiry(ChatContext context) {

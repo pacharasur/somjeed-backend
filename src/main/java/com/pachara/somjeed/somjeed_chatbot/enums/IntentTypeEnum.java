@@ -6,5 +6,6 @@ public enum IntentTypeEnum {
     REPORT_LOST_CARD,
     REWARD_POINTS,
     CLOSING,
-    GENERAL_INQUIRY
+    GENERAL_INQUIRY,
+    ACCOUNT_STATEMENT
 }
