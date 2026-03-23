@@ -20,8 +20,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class DefaultPredictionService implements PredictionService {
-
-    private final Clock clock;
     private final List<PredictionRule> rules;
 
     @Override

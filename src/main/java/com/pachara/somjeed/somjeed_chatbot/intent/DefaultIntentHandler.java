@@ -58,17 +58,18 @@ public class DefaultIntentHandler implements IntentHandler {
         return List.of("How can I assist you further?");
     }
 
-    private String formatAmount(ChatContext context) {
+    private String formatNumber(Number number) {
         NumberFormat formatter = NumberFormat.getNumberInstance(Locale.ENGLISH);
         formatter.setMaximumFractionDigits(0);
         formatter.setMinimumFractionDigits(0);
-        return formatter.format(context.getOutstandingBalance());
+        return formatter.format(number);
+    }
+
+    private String formatAmount(ChatContext context) {
+        return formatNumber(context.getOutstandingBalance());
     }
 
     private String formatPoints(ChatContext context) {
-        NumberFormat formatter = NumberFormat.getNumberInstance(Locale.ENGLISH);
-        formatter.setMaximumFractionDigits(0);
-        formatter.setMinimumFractionDigits(0);
-        return formatter.format(context.getRewardPoints());
+        return formatNumber(context.getRewardPoints());
     }
 }
